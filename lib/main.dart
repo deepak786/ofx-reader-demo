@@ -76,6 +76,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           // remove whitespace after a close tag
                           .replaceAll(RegExp(r">\s+"), '>');
 
+                      // TODO: Some tags contain the dots (.). Do we need to remove the dots?
+                      // <ORIGIN.ID>FMPWeb
+                      // <INTU.BID>3101
+                      // <START.TIME>20130921174852
+                      // <INTU.USERID>nathanaeljones
+
                       // parse the string as xml events to add the missing closing nodes
                       // TODO: this can be improved
                       bool isLastTextNode = false;
@@ -118,6 +124,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       final myTransformer = Xml2Json();
                       myTransformer.parse(ofxBuffer.toString());
                       json = jsonDecode(myTransformer.toParker());
+
+                      // In OFX version 1.x, the headers are without any xml tag. They are just like as "header":"value".
+                      // TODO: But in OFX version 2.x, they are the attributes of xml tag "<?OFX>". So need to handle that.
+                      // currently everything outside the "<OFX>" tag is considered as header.
                       json['headers'] = headers;
 
                       setState(() {});
